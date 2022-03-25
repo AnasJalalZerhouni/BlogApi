@@ -1,20 +1,28 @@
 using BlogApi.Infrastructure;
 using BlogApi.Infrastructure.Errors;
 using FluentValidation.AspNetCore;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 var services= builder.Services;
+
+
+services.AddMediatR(Assembly.GetExecutingAssembly());
 
 var connectionString = builder.Configuration.GetConnectionString("BlogConnectionString");
 services.AddDbContext<BlogContext>(opts =>
 {
     opts.UseSqlServer(connectionString);
 });
-
+ 
 services.AddLocalization(x => x.ResourcesPath = "Resources");
 
-services.AddSwaggerGen();
+services.AddSwaggerGen(x =>
+{
+    x.CustomSchemaIds(y => y.FullName);
+});
 services.AddCors();
 
 services.AddMvc(opt =>
@@ -29,6 +37,7 @@ services.AddMvc(opt =>
 {
     cfg.RegisterValidatorsFromAssemblyContaining<Program>();
 });
+
 
 
 
