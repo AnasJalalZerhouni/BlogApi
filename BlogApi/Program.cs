@@ -15,13 +15,14 @@ var connectionString = builder.Configuration.GetConnectionString("BlogConnection
 services.AddDbContext<BlogContext>(opts =>
 {
     opts.UseSqlServer(connectionString);
+    opts.EnableSensitiveDataLogging();
 });
  
 services.AddLocalization(x => x.ResourcesPath = "Resources");
 
 services.AddSwaggerGen(x =>
 {
-    x.CustomSchemaIds(y => y.FullName);
+    x.CustomSchemaIds(y => y.FullName.Replace("+", "."));
 });
 services.AddCors();
 

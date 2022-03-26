@@ -53,9 +53,15 @@ namespace BlogApi.Features.Articles
 
 
         [HttpPut("{slug}")]
-        public Task<ArticleEnvelope> Edit(string slug, [FromBody] Edit.Model model, CancellationToken cancellationToken)
+        public Task<ArticleEnvelope> Edit(string slug, [FromBody] Edit.ArticleData model, CancellationToken cancellationToken)
         {
             return _mediator.Send(new Edit.Command(model, slug), cancellationToken);
+        }
+
+        [HttpDelete("{slug}")]
+        public Task Delete(string slug ,CancellationToken cancellationToken)
+        {
+            return _mediator.Send(new Delete.Command(slug), cancellationToken);
         }
     }
 }

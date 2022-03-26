@@ -21,9 +21,9 @@ namespace BlogApi.Features.Articles
             public string[]? TagList { get; set; }
         }
 
-        public record Command(Model Article,string slug) : IRequest<ArticleEnvelope>;
+        public record Command(ArticleData Article,string slug) : IRequest<ArticleEnvelope>;
 
-        public record Model(ArticleData Data);
+        //public record Model(ArticleData Data);
 
         public class ArticleDataValidator : AbstractValidator<Command>
         {
@@ -46,7 +46,7 @@ namespace BlogApi.Features.Articles
 
             public async Task<ArticleEnvelope> Handle(Command message, CancellationToken cancellationToken)
             {
-                var article = await _context.Articles
+                                  var article = await _context.Articles
                      .Include(x => x.ArticleTags)
                      .FirstOrDefaultAsync(x => x.Slug == message.slug, cancellationToken);
                 if (article == null)
@@ -54,13 +54,13 @@ namespace BlogApi.Features.Articles
                     throw new RestException(HttpStatusCode.NotFound,new {Article = Constants.NOT_FOUND});
                 }
 
-                article.Title = message.Article.Data.Title ?? article.Title;
-                article.Description = message.Article.Data.Description ?? article.Description;
-                article.Body = message.Article.Data.Body ?? article.Body;
+                article.Title = message.Article.Title ?? article.Title;
+                article.Description = message.Article.Description ?? article.Description;
+                article.Body = message.Article.Body ?? article.Body;
                 article.Slug = article.Title.GenerateSlug();
 
 
-                var ArticleTagList = (message.Article.Data.TagList ?? Enumerable.Empty<string>());
+                var ArticleTagList = (message.Article.TagList ?? Enumerable.Empty<string>());
 
                 var articleTagsToAdd = GetArticleTagsToCreate(article, ArticleTagList);
                 var articleTagsToDelete = GetArticleTagsToDelete(article, ArticleTagList);
@@ -70,8 +70,10 @@ namespace BlogApi.Features.Articles
                 {
                     article.UpdatedAt = DateTime.UtcNow;
                 }
+                var ww = articleTagsToAdd.Where(x => x.Tag is not null).Select(a => a.Tag!).ToArray();
+                // ensure context is tracking any tags that are about to be created so that it won't attempt to insert a duplicate
+                _context.Tags.AddRange(articleTagsToAdd.Where(x => x.Tag is not null).Select(a => a.Tag!).ToArray());
 
-                _context.Tags.AttachRange(articleTagsToAdd.Select(a => a.Tag!).ToArray());
 
                 await _context.ArticleTags.AddRangeAsync(articleTagsToAdd, cancellationToken);
 
