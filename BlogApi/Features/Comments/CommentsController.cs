@@ -19,5 +19,11 @@ namespace BlogApi.Features.Comments
         {
             return mediatr.Send(new List.Query(slug),cancellationtoken);
         }
+
+        [HttpPost("{slug}/comments")]
+        public Task<CommentEnvolop> Create(string slug,[FromBody] Create.CommentData data,CancellationToken cancellationToken)
+        {
+            return mediatr.Send(new Create.Command(slug, data),cancellationToken);
+        }
     }
 }

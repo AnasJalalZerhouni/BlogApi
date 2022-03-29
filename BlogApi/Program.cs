@@ -36,7 +36,7 @@ services.AddMvc(opt =>
         System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
 }).AddFluentValidation(cfg =>
 {
-    cfg.RegisterValidatorsFromAssemblyContaining<Program>();
+    cfg.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 });
 
 
