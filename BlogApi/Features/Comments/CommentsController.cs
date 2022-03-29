@@ -25,5 +25,11 @@ namespace BlogApi.Features.Comments
         {
             return mediatr.Send(new Create.Command(slug, data),cancellationToken);
         }
+
+        [HttpDelete("{slug}/comments/{id}")]
+        public Task Delete(string slug,int id, CancellationToken cancellationToken)
+        {
+            return mediatr.Send(new Delete.Command(slug, id), cancellationToken);
+        }
     }
 }
