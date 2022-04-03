@@ -1,3 +1,4 @@
+using BlogApi.Features.Profiles;
 using BlogApi.Infrastructure;
 using BlogApi.Infrastructure.Errors;
 using FluentValidation.AspNetCore;
@@ -39,8 +40,10 @@ services.AddMvc(opt =>
     cfg.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 });
 
+services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
+services.AddScoped<IProfileReader, ProfileReader>();
 
 var app = builder.Build();
 
