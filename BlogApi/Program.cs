@@ -1,6 +1,7 @@
 using BlogApi.Features.Profiles;
 using BlogApi.Infrastructure;
 using BlogApi.Infrastructure.Errors;
+using BlogApi.Infrastructure.Security;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,7 @@ services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
 services.AddScoped<IProfileReader, ProfileReader>();
+services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 var app = builder.Build();
 
