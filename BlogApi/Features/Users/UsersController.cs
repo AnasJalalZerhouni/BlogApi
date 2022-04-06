@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BlogApi.Features.Users
 {
     [ApiController]
-    [Route("Users")]
+    [Route("user")]
     public class UsersController : ControllerBase
     {
         private readonly IMediator mediator;
@@ -14,8 +14,15 @@ namespace BlogApi.Features.Users
             this.mediator = mediator;
         }
 
-        [HttpPost]
+        [HttpPost("registre")]
         public Task<UserEnvelope> Create([FromBody] Create.Command command,
+            CancellationToken cancellationToken)
+        {
+            return mediator.Send(command, cancellationToken);
+        }
+
+        [HttpPost("login")]
+        public Task<UserEnvelope> Login([FromBody] Login.Command command,
             CancellationToken cancellationToken)
         {
             return mediator.Send(command, cancellationToken);
