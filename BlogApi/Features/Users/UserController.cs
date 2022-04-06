@@ -21,10 +21,10 @@ namespace BlogApi.Features.Users
         }
 
         [HttpPut]
-        public Task<UserEnvelope> UpdateUser([FromBody] Edit.Command,
+        public Task<UserEnvelope> UpdateUser([FromBody] Edit.Command command,
             CancellationToken cancellationToken)
         {
-
+            return mediator.Send(command,cancellationToken);
         }
 
     }
