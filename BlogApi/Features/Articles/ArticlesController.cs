@@ -1,6 +1,8 @@
 ﻿using BlogApi.Domain;
 using BlogApi.Infrastructure;
+using BlogApi.Infrastructure.Security;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Features.Articles
@@ -45,6 +47,7 @@ namespace BlogApi.Features.Articles
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
         public Task<ArticleEnvelope> Create([FromBody] Create.Command command,
             CancellationToken cancellationToken)
         {
@@ -53,12 +56,14 @@ namespace BlogApi.Features.Articles
 
 
         [HttpPut("{slug}")]
+        [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
         public Task<ArticleEnvelope> Edit(string slug, [FromBody] Edit.ArticleData model, CancellationToken cancellationToken)
         {
             return _mediator.Send(new Edit.Command(model, slug), cancellationToken);
         }
 
         [HttpDelete("{slug}")]
+        [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
         public Task Delete(string slug ,CancellationToken cancellationToken)
         {
             return _mediator.Send(new Delete.Command(slug), cancellationToken);

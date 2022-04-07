@@ -9,13 +9,13 @@ namespace BlogApi.Features.Users
 {
     public class Details
     {
-        public record Query(string username):IRequest<UserEnvelope>;
+        public record Query(string id):IRequest<UserEnvelope>;
 
         public class QueryValidator : AbstractValidator<Query>
         {
             public QueryValidator()
             {
-                RuleFor(x=>x.username).NotNull().NotEmpty();
+                RuleFor(x=>x.id).NotNull().NotEmpty();
             }
         }
 
@@ -32,7 +32,8 @@ namespace BlogApi.Features.Users
 
             public async Task<UserEnvelope> Handle(Query message, CancellationToken cancellationToken)
             {
-                var person = await context.Persons.FirstOrDefaultAsync(x=>x.Username == message.username,
+                var person = await context.Persons
+                    .FirstOrDefaultAsync(x=>x.PersonId.ToString() == message.id,
                     cancellationToken);
 
                 if (person == null)

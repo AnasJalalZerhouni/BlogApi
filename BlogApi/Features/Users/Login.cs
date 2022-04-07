@@ -32,11 +32,14 @@ namespace BlogApi.Features.Users
             private readonly BlogContext context;
             private readonly IMapper mapper;
             private readonly IPasswordHasher pwHash;
-            public Handler(BlogContext context, IMapper mapper, IPasswordHasher pwHash)
+            private readonly IJwtTokenGenerator tokenGen;
+            public Handler(BlogContext context, IMapper mapper, IPasswordHasher pwHash,
+                IJwtTokenGenerator tokenGen)
             {
                 this.context = context;
                 this.mapper = mapper;
                 this.pwHash = pwHash;
+                this.tokenGen= tokenGen;
             }
             public async Task<UserEnvelope> Handle(Command message, CancellationToken cancellationToken)
             {
@@ -61,7 +64,7 @@ namespace BlogApi.Features.Users
                 }
 
                 var user = mapper.Map<Domain.Person,User>(person);
-
+                user.Token = tokenGen.CreateToken(person.PersonId);
                 return new UserEnvelope(user);
             }
         }

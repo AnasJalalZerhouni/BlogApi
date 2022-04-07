@@ -1,5 +1,7 @@
 ﻿
+using BlogApi.Infrastructure.Security;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Features.Favorites
@@ -16,12 +18,14 @@ namespace BlogApi.Features.Favorites
         }
 
         [HttpPost("{slug}/favorites")]
+        [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
         public Task<Articles.ArticleEnvelope> FavoritesAdd(string slug,CancellationToken token)
         {
             return _mediator.Send(new Create.Command(slug), token);
         }
 
         [HttpDelete("{slug}/favorites")]
+        [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
         public Task FavoritesDelete(string slug, CancellationToken token)
         {
             return _mediator.Send(new Delete.Command(slug), token);

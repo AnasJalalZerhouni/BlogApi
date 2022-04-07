@@ -1,3 +1,4 @@
+using BlogApi;
 using BlogApi.Features.Profiles;
 using BlogApi.Infrastructure;
 using BlogApi.Infrastructure.Errors;
@@ -5,6 +6,7 @@ using BlogApi.Infrastructure.Security;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +26,15 @@ services.AddLocalization(x => x.ResourcesPath = "Resources");
 
 services.AddSwaggerGen(x =>
 {
+    x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please insert JWT with Bearer into field",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        BearerFormat = "JWT"
+    });
+
     x.CustomSchemaIds(y => y.FullName.Replace("+", "."));
 });
 services.AddCors();
@@ -31,6 +42,7 @@ services.AddCors();
 services.AddMvc(opt =>
 {
     opt.Filters.Add(typeof(ValidatorActionFilter));
+    opt.EnableEndpointRouting = false;
 
 }).AddJsonOptions(opt =>
 {
@@ -46,6 +58,12 @@ services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 services.AddScoped<IProfileReader, ProfileReader>();
 services.AddScoped<IPasswordHasher, PasswordHasher>();
+services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
+services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
+services.AddJwt();
+
 
 var app = builder.Build();
 
@@ -63,8 +81,11 @@ app.UseCors(builder =>
     .AllowAnyHeader()
     .AllowAnyMethod()
 );
+app.UseAuthentication();
 
-app.MapControllers();
+//app.MapControllers();
+app.UseMvc();
+
 
 app.Services.CreateScope()
     .ServiceProvider
