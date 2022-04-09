@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Features.Followers
 {
-    [ApiController]
-    [Route("/api/profiles")]
+
+    [Route("api/profiles")]
     public class FollowersController : ControllerBase
     {
         private readonly IMediator _mediator;

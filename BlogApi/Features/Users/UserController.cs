@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Features.Users
 {
-    [ApiController]
-    [Route("user")]
+    [Route("api/user")]
     [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
     public class UserController : ControllerBase
     {

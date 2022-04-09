@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Features.Articles
 {
-    [ApiController]
-    [Route("/api/Articles")]
+
+    [Route("api/Articles")]
     public class ArticlesController : ControllerBase
     {
         private readonly IMediator _mediator;

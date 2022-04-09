@@ -14,6 +14,8 @@ var services= builder.Services;
 
 
 services.AddMediatR(Assembly.GetExecutingAssembly());
+services.AddTransient(typeof(IPipelineBehavior<,>),typeof(ValidationPipelineBehavior<,>));
+services.AddTransient(typeof(IPipelineBehavior<,>),typeof(DBContextTransactionPipelineBehavior<,>));
 
 var connectionString = builder.Configuration.GetConnectionString("BlogConnectionString");
 services.AddDbContext<BlogContext>(opts =>
@@ -35,12 +37,20 @@ services.AddSwaggerGen(x =>
         BearerFormat = "JWT"
     });
 
+
     x.CustomSchemaIds(y => y.FullName.Replace("+", "."));
+
+    x.DocInclusionPredicate((version, apiDescription) => true);
+    x.TagActionsBy(y => new List<string>()
+                {
+                    y.GroupName ?? throw new InvalidOperationException()
+                });
 });
 services.AddCors();
 
 services.AddMvc(opt =>
 {
+    opt.Conventions.Add(new GroupByApiRootConvention());
     opt.Filters.Add(typeof(ValidatorActionFilter));
     opt.EnableEndpointRouting = false;
 
@@ -67,11 +77,6 @@ services.AddJwt();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
@@ -81,11 +86,16 @@ app.UseCors(builder =>
     .AllowAnyHeader()
     .AllowAnyMethod()
 );
+
 app.UseAuthentication();
 
-//app.MapControllers();
 app.UseMvc();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.Services.CreateScope()
     .ServiceProvider

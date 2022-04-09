@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Features.Profiles
 {
-    [ApiController]
-    [Route("/api/profiles")]
+
+    [Route("api/profiles")]
     public class ProfilesController : ControllerBase
     {
         private readonly IMediator _mediator;

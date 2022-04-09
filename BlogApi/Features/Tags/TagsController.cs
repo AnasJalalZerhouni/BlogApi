@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Features.Tags
 {
-    [ApiController]
-    [Route("/api/Tags")]
+
+    [Route("api/Tags")]
     public class TagsController : ControllerBase
     {
         private readonly IMediator mediator;

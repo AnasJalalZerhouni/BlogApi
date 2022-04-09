@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Features.Favorites
 {
-    [ApiController]
-    [Route("/api/Favorites")]
+
+    [Route("api/Favorites")]
     public class FavoritesController : ControllerBase
     {
 

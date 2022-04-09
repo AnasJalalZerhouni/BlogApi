@@ -6,8 +6,8 @@ using System.Net;
 
 namespace BlogApi.Features.Comments
 {
-    [ApiController]
-    [Route("/articles")]
+
+    [Route("api/articles")]
     public class CommentsController : ControllerBase
     {
         private readonly IMediator mediatr;
