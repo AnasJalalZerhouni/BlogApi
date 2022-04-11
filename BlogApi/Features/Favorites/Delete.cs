@@ -11,9 +11,12 @@ namespace BlogApi.Features.Favorites
         public class handler : IRequestHandler<Command>
         {
             private readonly BlogContext context;
-            public handler(BlogContext context)
+            private readonly ICurrentUserAccessor currentUser;
+
+            public handler(BlogContext context, ICurrentUserAccessor currentUser)
             {
                 this.context = context;
+                this.currentUser = currentUser;
             }
 
             public async Task<Unit> Handle(Command message, CancellationToken cancellationToken)
@@ -21,7 +24,7 @@ namespace BlogApi.Features.Favorites
                 var person = context.Persons
                     .Include(x=>x.ArticleFavorites)
                     .ThenInclude(x=>x.Article)
-                    .FirstOrDefault();
+                    .FirstOrDefault(x=>x.PersonId == currentUser.GetCurrentUserId());
 
                 var favorite = person.ArticleFavorites
                     .FirstOrDefault(x=> x.Article !=null 

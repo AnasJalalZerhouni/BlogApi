@@ -38,17 +38,19 @@ namespace BlogApi.Features.Users
             private readonly BlogContext context;
             private readonly IMapper mapper;
             private readonly IPasswordHasher pwHash;
-            public Handler(BlogContext context, IMapper mapper, IPasswordHasher pwHash)
+            private readonly ICurrentUserAccessor currentUser;
+            public Handler(BlogContext context, IMapper mapper, IPasswordHasher pwHash, ICurrentUserAccessor currentUser)
             {
                 this.context = context;
                 this.mapper = mapper;
                 this.pwHash = pwHash;
+                this.currentUser = currentUser;
             }
             public async Task<UserEnvelope> Handle(Command message, CancellationToken cancellationToken)
             {
                 var person = await context
                     .Persons
-                    .FirstOrDefaultAsync(cancellationToken);
+                    .FirstOrDefaultAsync(x=>x.PersonId == currentUser.GetCurrentUserId(),cancellationToken);
 
                 person.Username = message.user.Username ?? person.Username;
                 person.Email = message.user.Email ?? person.Email;

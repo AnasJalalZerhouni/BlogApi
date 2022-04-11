@@ -24,16 +24,18 @@ namespace BlogApi.Features.Followers
         {
             private readonly BlogContext context;
             private readonly IProfileReader _profileReader;
-
-            public Handler(BlogContext context, IProfileReader _profileReader)
+            private readonly ICurrentUserAccessor currentUser;
+            public Handler(BlogContext context, IProfileReader _profileReader, ICurrentUserAccessor currentUser)
             {
                 this.context = context;
                 this._profileReader = _profileReader;
+                this.currentUser = currentUser;
             }
 
             public async Task<ProfileEnvolop> Handle(Command request, CancellationToken cancellationToken)
             {
-                var user = await context.Persons.FirstOrDefaultAsync(cancellationToken);
+                var user = await context.Persons
+                    .FirstOrDefaultAsync(x => x.PersonId == currentUser.GetCurrentUserId(),cancellationToken);
 
                 var userToFollow = await context.Persons
                     .FirstOrDefaultAsync(x=>x.Username==request.username,cancellationToken);

@@ -11,10 +11,12 @@ namespace BlogApi.Infrastructure
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string? GetCurrentUserId()
+        public int? GetCurrentUserId()
         {
-            return _httpContextAccessor.HttpContext?
+            string? userid= _httpContextAccessor.HttpContext?
                 .User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            return int.Parse(userid ?? "-1");
         }
     }
 }

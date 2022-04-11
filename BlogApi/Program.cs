@@ -37,6 +37,16 @@ services.AddSwaggerGen(x =>
         BearerFormat = "JWT"
     });
 
+    x.SupportNonNullableReferenceTypes();
+
+    x.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {   new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                    },
+                    Array.Empty<string>()}
+                });
 
     x.CustomSchemaIds(y => y.FullName.Replace("+", "."));
 

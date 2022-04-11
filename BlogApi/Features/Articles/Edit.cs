@@ -39,16 +39,19 @@ namespace BlogApi.Features.Articles
 
             private readonly BlogContext _context;
 
-            public Handler(BlogContext context)
+            private readonly ICurrentUserAccessor currentUser;
+
+            public Handler(BlogContext context, ICurrentUserAccessor currentUser)
             {
                 _context = context;
+                this.currentUser = currentUser;
             }
 
             public async Task<ArticleEnvelope> Handle(Command message, CancellationToken cancellationToken)
             {
-                                  var article = await _context.Articles
+                var article = await _context.Articles
                      .Include(x => x.ArticleTags)
-                     .FirstOrDefaultAsync(x => x.Slug == message.slug, cancellationToken);
+                     .FirstOrDefaultAsync(x => x.Slug == message.slug && x.Author.PersonId == currentUser.GetCurrentUserId(),  cancellationToken);
                 if (article == null)
                 {
                     throw new RestException(HttpStatusCode.NotFound,new {Article = Constants.NOT_FOUND});

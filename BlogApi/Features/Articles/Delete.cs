@@ -21,15 +21,19 @@ namespace BlogApi.Features.Articles
         public class Handler : IRequestHandler<Command>
         {
             private readonly BlogContext context;
-            public Handler(BlogContext context)
+            private readonly ICurrentUserAccessor currentUser;
+            public Handler(BlogContext context, ICurrentUserAccessor currentUser)
             {
                 this.context = context;
+                this.currentUser = currentUser;
             }
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
+               
                 var article = await context.Articles
-                    .FirstOrDefaultAsync(x=>x.Slug ==request.slug,cancellationToken);
+                    .FirstOrDefaultAsync(x=>x.Slug ==request.slug && x.Author.PersonId ==currentUser.GetCurrentUserId() ,
+                    cancellationToken);
 
                 if (article == null)
                 {

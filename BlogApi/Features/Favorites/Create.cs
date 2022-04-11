@@ -14,10 +14,12 @@ namespace BlogApi.Features.Favorites
         public class handler : IRequestHandler<Command, ArticleEnvelope>
         {
             private readonly BlogContext context;
+            private readonly ICurrentUserAccessor currentUser;
 
-            public handler(BlogContext context)
+            public handler(BlogContext context, ICurrentUserAccessor currentUser)
             {
                 this.context = context;
+                this.currentUser = currentUser;
             }
 
             public async Task<ArticleEnvelope> Handle(Command message, CancellationToken cancellationToken)
@@ -31,7 +33,9 @@ namespace BlogApi.Features.Favorites
                            new { article = Constants.NOT_FOUND });
                 }
 
-                var person = context.Persons.FirstOrDefault();
+                var person = await context.Persons
+                    .FirstOrDefaultAsync(x=>x.PersonId == currentUser.GetCurrentUserId(),
+                    cancellationToken);
 
                 var favorite = await context.ArticleFavorites
                     .FirstOrDefaultAsync(x => x.ArticleId == article.ArticleId 

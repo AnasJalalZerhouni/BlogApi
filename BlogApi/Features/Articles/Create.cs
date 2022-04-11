@@ -44,15 +44,17 @@ namespace BlogApi.Features.Articles
         {
 
             private readonly BlogContext _context;
+            private readonly ICurrentUserAccessor currentUser;
 
-            public Handler(BlogContext context)
+            public Handler(BlogContext context, ICurrentUserAccessor currentUser)
             {
                 _context = context;
+                this.currentUser = currentUser;
             }
 
             public async Task<ArticleEnvelope> Handle(Command message, CancellationToken cancellationToken)
             {
-                var author = await _context.Persons.FirstOrDefaultAsync(cancellationToken);
+                var author = await _context.Persons.FirstOrDefaultAsync(x=>x.PersonId== currentUser.GetCurrentUserId(), cancellationToken);
                 var tags = new List<Tag>();
 
                 foreach (var tag in (message.Article.TagList ?? Enumerable.Empty<string>() ))

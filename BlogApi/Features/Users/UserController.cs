@@ -22,7 +22,7 @@ namespace BlogApi.Features.Users
         [HttpGet]
         public Task<UserEnvelope> GetCurrent(CancellationToken cancellationToken)
         {
-            return mediator.Send(new Details.Query(currentUser.GetCurrentUserId() ?? "<Unknown>"),cancellationToken);
+            return mediator.Send(new Details.Query(currentUser.GetCurrentUserId().ToString() ?? "<Unknown>"),cancellationToken);
         }
 
         [HttpPut]
