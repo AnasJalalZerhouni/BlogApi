@@ -1,6 +1,8 @@
 ﻿using BlogApi.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 using System.Text;
 
 namespace BlogApi
@@ -52,6 +54,22 @@ namespace BlogApi
                         }
                     };
                 });
+        }
+    
+        public static void AddSerilogLogging(this ILoggingBuilder logger)
+        {
+
+            logger.ClearProviders();
+
+            var log = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .Enrich.FromLogContext()
+                //just for local debug
+                .WriteTo.Console(outputTemplate: "{Timestamp:HH:mm:ss} [{Level}] {SourceContext} {Message}{NewLine}{Exception}", theme: AnsiConsoleTheme.Code)
+                .CreateLogger();
+
+            logger.AddSerilog(log);
+            Log.Logger = log;
         }
     }
 }

@@ -7,11 +7,13 @@ using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 var services= builder.Services;
 
+builder.Logging.AddSerilogLogging();
 
 services.AddMediatR(Assembly.GetExecutingAssembly());
 services.AddTransient(typeof(IPipelineBehavior<,>),typeof(ValidationPipelineBehavior<,>));
@@ -49,7 +51,7 @@ services.AddSwaggerGen(x =>
                 });
 
     x.CustomSchemaIds(y => y.FullName.Replace("+", "."));
-
+    x.SwaggerDoc("v1", new OpenApiInfo { Title = "Blog API", Version = "v1" });
     x.DocInclusionPredicate((version, apiDescription) => true);
     x.TagActionsBy(y => new List<string>()
                 {
@@ -88,6 +90,7 @@ services.AddJwt();
 var app = builder.Build();
 
 
+
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseCors(builder =>
@@ -103,8 +106,14 @@ app.UseMvc();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger(c =>
+    {
+        c.RouteTemplate = "swagger/{documentName}/swagger.json";
+    });
+    app.UseSwaggerUI(x =>
+    {
+        x.SwaggerEndpoint("/swagger/v1/swagger.json", "Blog API V1");
+    });
 }
 
 app.Services.CreateScope()
