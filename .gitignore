@@ -3,3 +3,5 @@
 /BlogApi/.vs
 
 /BlogApi/bin
+/BlogApi.IntegrationTests/bin
+/BlogApi.IntegrationTests/obj

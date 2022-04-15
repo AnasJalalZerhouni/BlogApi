@@ -23,9 +23,11 @@ namespace BlogApi.Features.Comments
         public class handler : IRequestHandler<Command, CommentEnvolop>
         {
             private readonly BlogContext context;
-            public handler(BlogContext context)
+            private ICurrentUserAccessor currentUser;
+            public handler(BlogContext context, ICurrentUserAccessor currentUser)
             {
                 this.context = context;
+                this.currentUser = currentUser;
             }
             public async Task<CommentEnvolop> Handle(Command message, CancellationToken cancellationToken)
             {
@@ -38,7 +40,7 @@ namespace BlogApi.Features.Comments
                             new {article=Constants.NOT_FOUND });
                 }
 
-                var user = await context.Persons.FirstOrDefaultAsync(cancellationToken);
+                var user = await context.Persons.FirstOrDefaultAsync(x=>x.PersonId == currentUser.GetCurrentUserId(),cancellationToken);
 
                 var comment = new Comment
                 {

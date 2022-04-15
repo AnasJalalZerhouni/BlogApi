@@ -122,3 +122,5 @@ app.Services.CreateScope()
     .Database.EnsureCreated();
 
 app.Run();
+
+public partial class Program { }

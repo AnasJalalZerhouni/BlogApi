@@ -8,7 +8,7 @@ namespace BlogApi.Infrastructure
     public class BlogContext : DbContext
     {
         private IDbContextTransaction? _currentTransaction;
-        public BlogContext(DbContextOptions<BlogContext> opts) : base(opts)
+        public BlogContext(DbContextOptions opts) : base(opts)
         {
         }
 

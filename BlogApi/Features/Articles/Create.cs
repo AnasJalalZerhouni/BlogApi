@@ -16,7 +16,7 @@ namespace BlogApi.Features.Articles
 
             public string? Body { get; set; }
 
-            public string[]? TagList { get; set; }
+            public string[]? TagList { get; set; } 
         }
 
         public class ArticleDataValidator : AbstractValidator<ArticleData>
