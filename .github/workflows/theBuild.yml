@@ -20,8 +20,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      working-directory: ./BlogApi
       run: dotnet build --no-restore
     - name: Test
-      working-directory: ./BlogApi.IntegrationTests
       run: dotnet test --no-build --verbosity normal
